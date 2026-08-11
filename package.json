@@ -1,0 +1,47 @@
+{
+  "name": "freeze-letter-generator",
+  "version": "0.1.0",
+  "description": "Generates protected-consumer credit-freeze request letters for the three major bureaus (Equifax, Experian, TransUnion), for a guardian, conservator, or POA agent acting for someone who can't freeze their own credit. Zero runtime dependencies, nothing ever leaves the browser.",
+  "keywords": [
+    "elder-fraud",
+    "credit-freeze",
+    "power-of-attorney",
+    "guardianship",
+    "protected-consumer",
+    "identity-theft",
+    "fintech",
+    "legal-tech"
+  ],
+  "homepage": "https://stepuplaw.com/florida-elder-abuse-attorney",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stepuplaw/freeze-letter-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stepuplaw/freeze-letter-generator/issues"
+  },
+  "author": "Kevin D. Klagge, Esq. <office@stepuplaw.com> (https://stepuplaw.com)",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "pretest": "npm run build",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

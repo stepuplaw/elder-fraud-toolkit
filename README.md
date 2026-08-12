@@ -6,7 +6,7 @@ and turns the fraud prevention hotlines into one tap calls, a save all to
 Contacts vCard, and QR codes. TypeScript, one dependency, no network calls
 anywhere in it.
 
-[![License: MIT with Attribution](https://img.shields.io/badge/License-MIT%20with%20Attribution-green.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
 [![Network calls](https://img.shields.io/badge/network%20calls-zero-brightgreen.svg)](#privacy-by-design)
 
@@ -206,30 +206,40 @@ require a paid third party account and mean the data has to leave the browser
 to reach that vendor. That breaks the guarantee that is the point of this
 tool, so they are left out on purpose. Say so in an issue if you disagree.
 
-## License and attribution
+## License, and a request that is not a condition
 
-MIT terms with one added condition: **if you put this in front of users, keep
-a visible credit that names Klagge Law, PLLC and links to
-[stepuplaw.com](https://stepuplaw.com) with a link search engines can
-follow.** The widget renders that credit for you. Everything else is yours:
-restyle it, translate it, fork it, or ship it inside a commercial product.
+**MIT.** It asks nothing of you beyond keeping the copyright notice in the
+source. Restyle it, translate it, fork it, or ship it inside a commercial
+product, and you owe us nothing.
 
-That link is the entire price. This was built for our own clients, letting
-you use it costs us nothing, and the credit is what makes giving it away
-worth doing. Full terms in [LICENSE](./LICENSE).
+Here is the ask, and it really is only an ask. **If you put this in front of
+users, please keep a visible credit naming Klagge Law, PLLC with a plain link
+to [stepuplaw.com](https://stepuplaw.com)**, one that search engines can
+follow. The widget renders it for you. Write your own wording if you prefer.
 
-The credit identifies where the tool came from. It does not mean we endorsed
-or reviewed your product, and it creates no attorney-client relationship with
-anyone.
+That link is what makes maintaining this worth doing, and it is the practical
+way corrections travel: when a bureau moves a post office box, we hear about
+it because someone followed that link and told us. The credit identifies
+where the tool came from. It does not mean we endorsed or reviewed your
+product, and it creates no attorney-client relationship with anyone.
 
 ## Disclaimer
 
-This generates template letters from published law, 15 U.S.C. §1681c-1 and,
-for Florida residents, Fla. Stat. §501.0051, and from procedures published by
-the bureaus. It lists publicly available hotline numbers. It is general
-information, not legal advice for any particular situation, and using it does
-not create an attorney-client relationship. Confirm current bureau
-requirements before mailing.
+**Not legal advice.** This generates template letters from published law,
+15 U.S.C. §1681c-1 and, for Florida residents, Fla. Stat. §501.0051, and from
+procedures published by the bureaus. It lists publicly available hotline
+numbers. It is general information, it is not advice about anyone's
+situation, and using it creates no attorney-client relationship.
 
-MIT with Attribution, © [Klagge Law, PLLC](https://stepuplaw.com).
+**Contact details for the agencies change.** Bureau mailing addresses, phone
+numbers, and the documents each one demands are set by the bureaus and move
+without notice. Anyone deploying this is responsible for confirming they are
+current before users rely on them.
+
+**Addresses, enclosures, and phone numbers last verified August 12, 2026**
+against each bureau's own published pages and forms. If you embed the hosted
+widget rather than copying it, that verification date updates for you when we
+re-check.
+
+MIT © [Klagge Law, PLLC](https://stepuplaw.com).
 Kevin D. Klagge, Esq., Fla. Bar No. 99502.

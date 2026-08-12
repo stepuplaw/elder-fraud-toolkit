@@ -39,7 +39,8 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && npm run demo:vendor",
+    "demo:vendor": "mkdir -p demo/vendor && cp node_modules/qrcode-generator/dist/qrcode.mjs demo/vendor/qrcode.mjs",
     "pretest": "npm run build",
     "test": "node --test"
   },

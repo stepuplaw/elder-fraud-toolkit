@@ -4,6 +4,12 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Elder Fraud Toolkit (demo)</title>
+<!--
+  This demo exists to show the library working, not to compete in search with the
+  maintained public version of the same tool. Search engines are asked to skip it.
+-->
+<meta name="robots" content="noindex" />
+<link rel="canonical" href="https://stepuplaw.com/credit-freeze-letter-generator" />
 <style>
   body { font-family: system-ui, sans-serif; max-width: 680px; margin: 2rem auto; padding: 0 1rem; color: #1E293B; }
   h1 { font-size: 1.5rem; }
@@ -100,11 +106,27 @@
   <div id="contactList"></div>
 
   <footer>
+    This is the developer demo for
+    <a href="https://github.com/stepuplaw/elder-fraud-toolkit">elder-fraud-toolkit</a>.
+    The maintained public version, with the full explanation of how a
+    protected-consumer freeze works, is at
+    <a href="https://stepuplaw.com/credit-freeze-letter-generator">stepuplaw.com/credit-freeze-letter-generator</a>.
+    <br /><br />
     Free tool by Kevin D. Klagge, Esq., Klagge Law, PLLC &mdash;
     <a href="https://stepuplaw.com">stepuplaw.com</a>. General information, not
     legal advice for any particular situation; confirm current requirements
     before mailing or relying on any number listed here.
   </footer>
+
+  <!--
+    The library imports its QR encoder by the bare specifier "qrcode-generator".
+    Browsers cannot resolve bare specifiers on their own, so this import map points
+    it at the copy that `npm run build` places in demo/vendor/. Nothing is fetched
+    from a CDN or any other server; the demo works fully offline, which is the point.
+  -->
+  <script type="importmap">
+    { "imports": { "qrcode-generator": "./vendor/qrcode.mjs" } }
+  </script>
 
   <script type="module">
     import {

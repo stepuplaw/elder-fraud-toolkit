@@ -1,11 +1,21 @@
 # elder-fraud-toolkit
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
+[![No network calls](https://img.shields.io/badge/network%20calls-zero-brightgreen.svg)](#privacy-by-design)
+
 A small TypeScript library that automates the mail- and phone-based steps
 from a real elder-fraud-prevention checklist: it fills in credit-freeze
 request letters (for yourself, or for a guardian/conservator/POA agent
 acting for someone who can't), and turns a list of fraud-prevention
 hotlines into one-tap calls, a save-all-to-Contacts vCard, and scannable
 QR codes.
+
+**Just want to use it?** There is a free, no-signup web version built on
+this library at
+**[stepuplaw.com/credit-freeze-letter-generator](https://stepuplaw.com/credit-freeze-letter-generator)**.
+Fill in the form, print three letters, mail them. Nothing you type there
+leaves your browser either.
 
 ## Why this exists
 
@@ -78,6 +88,14 @@ A working browser demo (plain HTML + ES modules — mode toggle, letter
 generator, print button, and the full contact list with QR codes and a
 "Save all to Contacts" button) is in
 [`demo/index.html`](./demo/index.html) — open it after `npm run build`.
+
+Two notes on running the demo, both handled for you by `npm run build`:
+it must be served over `http://` rather than opened as a `file://` path,
+because ES modules are blocked on the file protocol (`npx serve .` then
+visit `/demo/`), and the QR encoder is imported by the bare specifier
+`qrcode-generator`, which browsers cannot resolve alone. The build copies
+that module to `demo/vendor/` and the demo's import map points at it, so
+the page still runs with no CDN and no network access at all.
 
 ## Usage
 

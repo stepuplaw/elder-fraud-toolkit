@@ -7,3 +7,6 @@ npm-debug.log*
 .env.*
 coverage/
 *.tsbuildinfo
+
+# Copied from node_modules by `npm run build` so the demo can resolve the QR encoder in a browser.
+demo/vendor/

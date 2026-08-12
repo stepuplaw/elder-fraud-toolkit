@@ -223,6 +223,9 @@ it because someone followed that link and told us. The credit identifies
 where the tool came from. It does not mean we endorsed or reviewed your
 product, and it creates no attorney-client relationship with anyone.
 
+The request is spelled out in [ATTRIBUTION.md](./ATTRIBUTION.md), deliberately
+kept out of [LICENSE](./LICENSE) so the licence stays detectably, plainly MIT.
+
 ## Disclaimer
 
 **Not legal advice.** This generates template letters from published law,

@@ -79,7 +79,14 @@ export interface FreezeLetter {
   mailingAddress: string[];
   subject: string;
   paragraphs: string[];
+  /** What that bureau wants in the envelope. Differs per bureau, by a lot. */
   enclosures: string[];
+  /**
+   * Guidance for the person mailing the letter, not part of the letter itself.
+   * Render it on screen and keep it out of the printed page. Each bureau has
+   * its own, because each one departs from the others somewhere.
+   */
+  caution: string;
 }
 
 const CAPACITY_LABEL: Record<FiduciaryCapacity, string> = {
@@ -94,20 +101,107 @@ const AUTHORITY_DOCUMENT_LABEL: Record<FiduciaryCapacity, string> = {
   conservator: 'letters of conservatorship',
 };
 
-/** Mailing address for one bureau's freeze-by-mail process. Addressee lines match each bureau's own published wording. */
-function bureauAddress(bureau: Bureau, mode: 'self' | 'fiduciary'): string[] {
+/**
+ * Addresses, enclosures and cautions, verified against each bureau's own live
+ * pages and forms on 2026-08-12. Addressee lines match each bureau's published
+ * wording, including the places where a bureau words the same box differently
+ * between its two processes.
+ *
+ * Every value here was checked against the bureau, not against a template. The
+ * widely copied templates get at least three of these wrong.
+ */
+interface BureauSpec {
+  mailingAddress: string[];
+  /** Fixed list for self mode. Fiduciary mode builds its own, naming the person. */
+  enclosures?: string[];
+  caution: string;
+}
+
+const BUREAU_SPECS: Record<Bureau, Record<'self' | 'fiduciary', BureauSpec>> = {
+  Equifax: {
+    self: {
+      mailingAddress: ['Equifax Information Services LLC', 'P.O. Box 105788', 'Atlanta, GA 30348-5788'],
+      enclosures: [
+        'A copy of one document showing your Social Security number, meaning your Social Security card, a pay stub that shows the number, or a W2 or 1099',
+        'A copy of one document showing your current address, such as a driver license, a lease or deed, a pay stub, or a utility or phone bill',
+      ],
+      caution:
+        'Equifax routes every mail request to its own form and never says a plain letter is enough, so enclose the Equifax security freeze request form with this letter. Equifax also does not accept a driver license as proof of identity, only as proof of address, so the identity document has to show the Social Security number.',
+    },
+    fiduciary: {
+      mailingAddress: ['Equifax Information Services LLC', 'P.O. Box 105788', 'Atlanta, GA 30348-5788'],
+      caution:
+        'Equifax calls this an Incapacitated Adult freeze rather than a protected consumer freeze, and publishes a form for it, so enclose that form too. Equifax is the only bureau that requires both the Social Security card and the birth certificate of the person being protected.',
+    },
+  },
+  Experian: {
+    self: {
+      mailingAddress: ['Experian Security Freeze', 'P.O. Box 9554', 'Allen, TX 75013'],
+      enclosures: [
+        'A copy of a government-issued photo ID, such as a driver license',
+        'A copy of a utility bill or bank statement showing your name, current mailing address, and issue date',
+      ],
+      caution:
+        'Experian accepts a plain letter, and wants the Social Security number, date of birth, and every address from the past two years in the letter itself. Fill in those blanks before mailing.',
+    },
+    fiduciary: {
+      // Same box, different addressee line. Experian publishes no "ATTN: Protected
+      // Consumer" line anywhere, despite that string circulating widely.
+      mailingAddress: ['Experian', 'PO Box 9554', 'Allen, TX 75013'],
+      caution:
+        'Experian is the gap in this process. The only mail procedure it publishes covers minors and court-appointed guardians, and it publishes nothing for a power of attorney or an adult conservatorship. Call Experian at (888) 397-3742 before mailing and ask where to send it. This letter is the right request, but the address may not be.',
+    },
+  },
+  TransUnion: {
+    self: {
+      mailingAddress: ['TransUnion', 'P.O. Box 160', 'Woodlyn, PA 19094'],
+      enclosures: [
+        'Nothing is required. TransUnion asks only for your name, address, and Social Security number in the letter itself',
+        'Optional, and it helps them find the file faster: one proof of identity and two proofs of current address',
+      ],
+      caution:
+        'TransUnion is the lightest of the three by mail. No form, no mandatory enclosures, and P.O. Box 160 for your own freeze. Do not send this one to Box 380.',
+    },
+    fiduciary: {
+      mailingAddress: ['TransUnion', 'P.O. Box 380', 'Woodlyn, PA 19094'],
+      caution:
+        'Box 380 is the protected consumer address, covering a minor or an incapacitated adult. If the person can still manage their own affairs and you are simply acting under a power of attorney, TransUnion publishes a different address for that, P.O. Box 2000, Chester, PA 19016. Send copies only, never originals.',
+    },
+  },
+};
+
+/** Enclosures for a fiduciary request. Each bureau wants a different set. */
+function fiduciaryEnclosures(bureau: Bureau, authorityDoc: string, personName: string): string[] {
   switch (bureau) {
     case 'Equifax':
-      return ['Equifax Security Freeze', 'P.O. Box 105788', 'Atlanta, GA 30348'];
+      return [
+        `A copy of your ${authorityDoc}`,
+        'A copy of your own identification',
+        `A copy of the Social Security card of ${personName}`,
+        `A copy of the birth certificate of ${personName}`,
+      ];
     case 'Experian':
-      return ['Experian Security Freeze', 'P.O. Box 9554', 'Allen, TX 75013'];
+      return [
+        'A copy of your government-issued photo ID',
+        'Proof of your address, such as a bank statement, utility bill, or insurance statement',
+        `A copy of your ${authorityDoc}`,
+      ];
     case 'TransUnion':
-      // Same recipient, two different boxes depending on which process this is.
-      return mode === 'fiduciary'
-        ? ['TransUnion', 'P.O. Box 380', 'Woodlyn, PA 19094']
-        : ['TransUnion', 'P.O. Box 160', 'Woodlyn, PA 19094'];
+      return [
+        `A copy of your ${authorityDoc}`,
+        `Proof of identification for ${personName}, meaning a Social Security card, a certified birth certificate, or a government-issued ID`,
+        'Proof of identification for the person signing below',
+      ];
   }
 }
+
+/**
+ * Two of the three bureaus want a Social Security number on a mailed request.
+ * This library will not collect one, so the letter carries a blank line and the
+ * number is written on the paper by hand, where it never touches a computer.
+ * Do not replace this with a field.
+ */
+const SSN_LINE = 'Social Security number: ____________________';
 
 function formatAddress(a: Address): string {
   const line2 = a.line2 ? `${a.line2}, ` : '';
@@ -124,20 +218,27 @@ function buildSelfLetters(input: SelfFreezeInput): FreezeLetter[] {
   const dobLine = input.person.dateOfBirth ? `Date of birth: ${input.person.dateOfBirth}` : undefined;
 
   return BUREAUS.map((bureau) => {
+    const spec = BUREAU_SPECS[bureau].self;
     const paragraphs = [
       `I am requesting a security freeze on my own credit file under the Fair Credit Reporting Act, 15 U.S.C. § 1681c-1.`,
       `Please place a security freeze on my file effective immediately, and send written confirmation, along with the PIN or password I will need to lift it later, to the address below.`,
-      [input.person.name, formatAddress(input.person.address), dobLine].filter(Boolean).join('\n'),
+      [
+        input.person.name,
+        formatAddress(input.person.address),
+        dobLine,
+        SSN_LINE,
+        'Addresses for the past two years: ____________________',
+      ]
+        .filter(Boolean)
+        .join('\n'),
     ];
     return {
       bureau,
-      mailingAddress: bureauAddress(bureau, 'self'),
-      subject: `Request for a Security Freeze — ${input.person.name}`,
+      mailingAddress: spec.mailingAddress,
+      subject: `Request for a Security Freeze, ${input.person.name}`,
       paragraphs,
-      enclosures: [
-        'Copy of a government-issued photo ID',
-        'Proof of current address if it differs from the ID (a recent utility bill or bank statement works)',
-      ],
+      enclosures: spec.enclosures!,
+      caution: spec.caution,
     };
   });
 }
@@ -153,21 +254,21 @@ function buildFiduciaryLetters(input: FiduciaryFreezeInput): FreezeLetter[] {
   const dobLine = input.protectedPerson.dateOfBirth ? `Date of birth: ${input.protectedPerson.dateOfBirth}` : undefined;
 
   return BUREAUS.map((bureau) => {
+    const spec = BUREAU_SPECS[bureau].fiduciary;
     const paragraphs = [
       `I am writing ${statuteClause} to request a security freeze on the credit file of ${input.protectedPerson.name}, who is unable to place this freeze themselves. I am acting as their ${capacityLabel}${authorityDateClause}, and I have enclosed a copy of my ${authorityDoc}.`,
-      `Please place a security freeze on this consumer's file effective immediately, and send written confirmation to the address below. I have also enclosed copies of identification for both ${input.protectedPerson.name} and myself. Please let me know if any further documentation is required.`,
-      [input.protectedPerson.name, formatAddress(input.protectedPerson.address), dobLine].filter(Boolean).join('\n'),
+      `Please place a security freeze on this consumer's file effective immediately, and send written confirmation to the address below. I have enclosed the documents listed at the end of this letter. Please let me know if any further documentation is required.`,
+      [input.protectedPerson.name, formatAddress(input.protectedPerson.address), dobLine, SSN_LINE]
+        .filter(Boolean)
+        .join('\n'),
     ];
     return {
       bureau,
-      mailingAddress: bureauAddress(bureau, 'fiduciary'),
+      mailingAddress: spec.mailingAddress,
       subject: `Request for a Protected Consumer Security Freeze on Behalf of ${input.protectedPerson.name}`,
       paragraphs,
-      enclosures: [
-        `Copy of ${authorityDoc}`,
-        `Copy of identification for ${input.protectedPerson.name}`,
-        'Copy of identification for the person signing below',
-      ],
+      enclosures: fiduciaryEnclosures(bureau, authorityDoc, input.protectedPerson.name),
+      caution: spec.caution,
     };
   });
 }

@@ -1,85 +1,89 @@
 # elder-fraud-toolkit
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+Generates the credit freeze request letters that Equifax, Experian and
+TransUnion require by mail, addressed correctly for two different situations,
+and turns the fraud prevention hotlines into one tap calls, a save all to
+Contacts vCard, and QR codes. TypeScript, one dependency, no network calls
+anywhere in it.
+
+[![License: MIT with Attribution](https://img.shields.io/badge/License-MIT%20with%20Attribution-green.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
-[![No network calls](https://img.shields.io/badge/network%20calls-zero-brightgreen.svg)](#privacy-by-design)
+[![Network calls](https://img.shields.io/badge/network%20calls-zero-brightgreen.svg)](#privacy-by-design)
 
-A small TypeScript library that automates the mail- and phone-based steps
-from a real elder-fraud-prevention checklist: it fills in credit-freeze
-request letters (for yourself, or for a guardian/conservator/POA agent
-acting for someone who can't), and turns a list of fraud-prevention
-hotlines into one-tap calls, a save-all-to-Contacts vCard, and scannable
-QR codes.
+Three ways to use it, in order of how little work they are:
 
-**Just want to use it?** There is a free, no-signup web version built on
-this library at
-**[stepuplaw.com/credit-freeze-letter-generator](https://stepuplaw.com/credit-freeze-letter-generator)**.
-Fill in the form, print three letters, mail them. Nothing you type there
-leaves your browser either.
+1. **Just use the tool.** Free, no signup, at
+   [stepuplaw.com/credit-freeze-letter-generator](https://stepuplaw.com/credit-freeze-letter-generator).
+2. **Put it on your own site.** Two lines of HTML, no build step, no account.
+   See [stepuplaw.com/credit-freeze-widget](https://stepuplaw.com/credit-freeze-widget).
+3. **Install the library** and build your own thing on it. Below.
 
-**Want to see the library itself running?** The demo in this repo is
-published at
-**[stepuplaw.github.io/elder-fraud-toolkit](https://stepuplaw.github.io/elder-fraud-toolkit/)**,
-including the QR codes and the save-all-to-Contacts vCard.
+The demo in this repo runs at
+[stepuplaw.github.io/elder-fraud-toolkit](https://stepuplaw.github.io/elder-fraud-toolkit/),
+including the QR codes and the vCard.
 
 ## Why this exists
 
-Americans over sixty reported more than **$7.7 billion** in fraud losses in
-2025 (FBI IC3 data). Most of the doors that fraud relies on close with a
-handful of free, simple steps, but two things get in the way in practice:
-some of those steps only work by mail, and the rest are numbers nobody
-has saved anywhere. This library automates both.
+Americans over 60 reported more than $7.7 billion in fraud losses in 2025
+across 201,266 complaints, an average of $38,500 each, per the FBI's Internet
+Crime Complaint Center. A credit freeze closes the most common door, it is
+free by federal law, and most families never place one because the version
+that matters to them only works by mail.
 
-### Freeze letters
+### The freeze letters
 
-Federal law (**15 U.S.C. § 1681c-1**) already requires the three major
-bureaus to honor a free credit freeze, including one requested by a
-guardian, conservator, or POA agent on behalf of someone who can't place
-it themselves — a protection most families never hear about. The catch:
-that fiduciary request is **mail-only** at all three bureaus, each wants a
-slightly different package, and one bureau's mailing address changes
-depending on which of the two processes you're using.
+Federal law, 15 U.S.C. §1681c-1, makes a security freeze free at all three
+nationwide bureaus. Two things about it catch people out.
 
-**A gotcha this library gets right so you don't have to find out the hard
-way:** TransUnion uses a *different* P.O. box for a fiduciary/protected-
-consumer freeze (Box 380) than it does for an individual's own
-freeze-by-mail request (Box 160). Equifax and Experian use the same
-address either way. Mixing these up is a common, invisible way for a
-hand-written letter to land on the wrong desk.
+**A freeze is not shared between the bureaus.** Each one keeps its own file,
+so freezing at Equifax does nothing at Experian or TransUnion, and no bureau
+has to pass your request along. That is why this generates three letters and
+not one. A fraud alert is the opposite: place one at any single bureau and
+that bureau must tell the other two. The two get described together, so
+people reasonably assume the one call rule covers both.
 
-### Fraud-prevention contacts
+**Placing a freeze for someone who cannot do it themselves is mail only.**
+That is the protected consumer freeze, and a guardian, a conservator, or an
+agent under a power of attorney can place one. No bureau takes that request
+by phone or web form, because it has to see the document that gives you
+authority. Each bureau wants a different package in the envelope, and one of
+them routes the mail to a different post office box depending on which
+process you are using.
 
-The rest of a checklist like this is a list of phone numbers: bureau
-freeze lines, opt-out registries, and reporting hotlines. This library
-ships that list plus three ways to act on it without retyping anything:
-`tel:` links for one-tap calling on a phone, a single-file vCard that
-imports every number into Contacts at once, and QR codes so someone on a
-desktop can hand a call off to an actual phone.
+### The hotlines
 
-## Privacy, by design
+The rest of a fraud prevention checklist is a list of phone numbers: bureau
+freeze lines, the four other registries that decide whether someone can open
+a bank account or turn on a phone in your parent's name, opt out registries,
+and reporting hotlines. This ships that list plus three ways to act on it
+without retyping anything. `tel:` links for one tap calling, a single vCard
+that imports every number into Contacts at once, and QR codes so someone on a
+desktop can hand a call to a phone.
 
-- **Nothing this library does ever leaves the browser.** There is no
-  network call anywhere in this package, no analytics, no server.
-- **The letter generator never asks for a Social Security number**, and
-  you shouldn't add that field if you build a form on top of it. Bureaus
-  verify identity from copies of ID physically enclosed in the envelope,
-  not from anything typed online. The only inputs are names, mailing
-  addresses, and an optional date of birth.
-- **QR codes are rendered locally** (via a dependency-free encoder, not a
-  third-party "QR generator" web API), so a phone number never round-trips
-  through an unrelated server just to become a scannable code.
-- The letter output is plain HTML, meant to be printed (browser "Print →
-  Save as PDF" works well) or piped into your own PDF renderer.
+## Privacy by design
+
+- **Nothing this library does ever leaves the browser.** There is no network
+  call anywhere in the package, no analytics, and no server.
+- **The letter generator never asks for a Social Security number.** Two of
+  the three bureaus do want one on a mailed request. The letters leave a
+  blank line for it, so the number is written by hand on paper and never
+  typed into a computer, and you should not add a field for it if you build a
+  form on top of this.
+- **QR codes are rendered locally** by a bundled encoder, not by a
+  third party "QR generator" web API, so a phone number never round trips
+  through an unrelated server to become a scannable code.
+- Letter output is plain HTML meant to be printed, or piped into your own PDF
+  renderer.
 
 ## Install
 
-Not yet published to the npm registry. Install straight from GitHub:
+Not on the npm registry yet. Install from GitHub:
 
 ```bash
 npm install github:stepuplaw/elder-fraud-toolkit
 ```
 
-Or clone and build locally:
+Or clone and build:
 
 ```bash
 git clone https://github.com/stepuplaw/elder-fraud-toolkit.git
@@ -89,18 +93,11 @@ npm run build
 npm test
 ```
 
-A working browser demo (plain HTML + ES modules — mode toggle, letter
-generator, print button, and the full contact list with QR codes and a
-"Save all to Contacts" button) is in
-[`demo/index.html`](./demo/index.html) — open it after `npm run build`.
-
-Two notes on running the demo, both handled for you by `npm run build`:
-it must be served over `http://` rather than opened as a `file://` path,
-because ES modules are blocked on the file protocol (`npx serve .` then
-visit `/demo/`), and the QR encoder is imported by the bare specifier
-`qrcode-generator`, which browsers cannot resolve alone. The build copies
-that module to `demo/vendor/` and the demo's import map points at it, so
-the page still runs with no CDN and no network access at all.
+To open the demo locally, serve it over http rather than opening the file
+directly, because browsers block ES modules on the `file://` protocol. Run
+`npx serve .` and visit `/demo/`. The build copies the QR encoder into
+`demo/vendor/` and the demo's import map points at it, so the page runs with
+no CDN and no network access.
 
 ## Usage
 
@@ -118,7 +115,7 @@ const selfLetters = buildFreezeLetters({
   },
 });
 
-// A POA agent, guardian, or conservator acting for someone else:
+// A POA agent, guardian, or conservator acting for someone who cannot:
 const fiduciaryInput = {
   mode: 'fiduciary',
   protectedPerson: {
@@ -135,11 +132,11 @@ const fiduciaryInput = {
 };
 const fiduciaryLetters = buildFreezeLetters(fiduciaryInput);
 
-// One print-ready HTML document with all three letters, one page each:
+// One print ready HTML document, all three letters, one page each:
 const html = renderLettersDocument(fiduciaryInput);
 ```
 
-### Fraud-prevention contacts
+### Fraud prevention contacts
 
 ```ts
 import {
@@ -153,10 +150,10 @@ import {
 FRAUD_PREVENTION_CONTACTS[0];
 // -> { id: 'equifax', name: 'Equifax Security Freeze', phone: '8882980045', category: 'Credit Bureau Freeze' }
 
-telHref(FRAUD_PREVENTION_CONTACTS[0]);   // 'tel:+18882980045'
+telHref(FRAUD_PREVENTION_CONTACTS[0]);     // 'tel:+18882980045'
 formatPhone(FRAUD_PREVENTION_CONTACTS[0]); // '(888) 298-0045'
 
-// One .vcf file, all 15 contacts, one tap to import on iOS/Android/macOS/Windows:
+// One .vcf file, all 15 contacts, one tap to import:
 const vcard = buildFraudPreventionVCard();
 
 // An inline SVG QR code encoding that contact's tel: link:
@@ -168,49 +165,71 @@ const svg = qrCodeForContact(FRAUD_PREVENTION_CONTACTS[0]);
 | Export | Signature | Notes |
 |---|---|---|
 | `buildFreezeLetters` | `(input: FreezeLetterInput) => FreezeLetter[]` | `input.mode` is `'self'` or `'fiduciary'`. Structured data, no HTML. |
-| `renderLetterHtml` | `(letter: FreezeLetter, input: FreezeLetterInput) => string` | One letter as print-ready HTML. |
+| `renderLetterHtml` | `(letter: FreezeLetter, input: FreezeLetterInput) => string` | One letter as print ready HTML. |
 | `renderLettersDocument` | `(input: FreezeLetterInput) => string` | All three letters as one HTML document, one page per bureau. |
-| `FRAUD_PREVENTION_CONTACTS` | `FraudPreventionContact[]` | The 15 hotlines, grouped into 5 categories. |
-| `telHref` | `(contact: FraudPreventionContact) => string` | `tel:` link for one-tap calling. |
-| `formatPhone` | `(contact: FraudPreventionContact) => string` | Human-readable `(888) 298-0045` format. |
-| `buildFraudPreventionVCard` | `(contacts?: FraudPreventionContact[]) => string` | One `.vcf` file for all (or a subset of) contacts. |
-| `qrCodeSvg` | `(text: string, options?: QrCodeOptions) => string` | Inline SVG QR code for arbitrary text. |
-| `qrCodeForContact` | `(contact: FraudPreventionContact, options?: QrCodeOptions) => string` | QR code encoding a contact's `tel:` link. |
+| `FRAUD_PREVENTION_CONTACTS` | `FraudPreventionContact[]` | The 15 hotlines, in 5 categories. |
+| `telHref` | `(contact: FraudPreventionContact) => string` | `tel:` link for one tap calling. |
+| `formatPhone` | `(contact: FraudPreventionContact) => string` | Readable `(888) 298-0045` format. |
+| `buildFraudPreventionVCard` | `(contacts?: FraudPreventionContact[]) => string` | One `.vcf` for all, or a subset. |
+| `qrCodeSvg` | `(text: string, options?: QrCodeOptions) => string` | Inline SVG QR code for any text. |
+| `qrCodeForContact` | `(contact: FraudPreventionContact, options?: QrCodeOptions) => string` | QR code for a contact's `tel:` link. |
 
 Full types are in [`src/letters.ts`](./src/letters.ts),
-[`src/contacts.ts`](./src/contacts.ts), and [`src/qr.ts`](./src/qr.ts),
-and are shipped as `.d.ts` files in the built package.
+[`src/contacts.ts`](./src/contacts.ts) and [`src/qr.ts`](./src/qr.ts), and
+ship as `.d.ts` files.
 
-## What this doesn't do (yet)
+## Verification
 
-It generates the letters and the tools to call or save contacts. It
-doesn't mail anything or place calls for you. A "we mail it for you" or
-in-browser-call feature is technically possible (mail-fulfillment APIs
-like Lob or PostGrid; browser-based VoIP via something like Twilio's
-Voice SDK), but both require a paid third-party account and, more
-importantly, mean the data has to leave the browser to reach that vendor
-— which breaks the "nothing is ever transmitted" guarantee that's the
-point of this tool. Left out deliberately; happy to hear if this should
-become an opt-in add-on.
+Every bureau address, enclosure list and phone number in this package was
+checked against the bureaus' own published pages and forms, not against
+secondary sources, most recently on **August 12, 2026**. Two findings worth
+repeating, because widely copied templates get them wrong:
 
-## Attribution
+1. **TransUnion runs three different addresses** across these processes. Box
+   160 for your own freeze by mail, Box 380 for a protected consumer freeze,
+   and a third address in Chester for managing the freeze of a competent
+   adult under a power of attorney. Templates that route every power of
+   attorney request to Box 380 are wrong for the competent adult case.
+2. **Equifax publishes its own forms** and does not say a plain letter is
+   accepted. The letters here are written as a complete request, and the tool
+   tells you to enclose the Equifax form as well.
 
-MIT licensed, so you can use this anywhere with no obligation beyond
-keeping the license notice in copies of the software. If you build a
-public tool on top of it, a visible credit line ("powered by
-elder-fraud-toolkit") is appreciated but not required.
+Addresses and procedures change. If you find one that has moved, open an
+issue and it gets corrected for everyone running the widget at once.
+
+## What this does not do
+
+It writes the letters and gives you the tools to call or save the numbers. It
+does not mail anything and it does not place calls. Both are technically
+possible, through a mail fulfillment API or browser based voice, and both
+require a paid third party account and mean the data has to leave the browser
+to reach that vendor. That breaks the guarantee that is the point of this
+tool, so they are left out on purpose. Say so in an issue if you disagree.
+
+## License and attribution
+
+MIT terms with one added condition: **if you put this in front of users, keep
+a visible credit that names Klagge Law, PLLC and links to
+[stepuplaw.com](https://stepuplaw.com) with a link search engines can
+follow.** The widget renders that credit for you. Everything else is yours:
+restyle it, translate it, fork it, or ship it inside a commercial product.
+
+That link is the entire price. This was built for our own clients, letting
+you use it costs us nothing, and the credit is what makes giving it away
+worth doing. Full terms in [LICENSE](./LICENSE).
+
+The credit identifies where the tool came from. It does not mean we endorsed
+or reviewed your product, and it creates no attorney-client relationship with
+anyone.
 
 ## Disclaimer
 
-This tool generates template letters based on published bureau
-procedures and 15 U.S.C. § 1681c-1 (and, for Florida residents,
-Fla. Stat. § 501.0051), and lists publicly available hotline numbers. It
-is general information, not legal advice for any particular situation,
-and using it does not create an attorney-client relationship. Bureau
-procedures and phone numbers change; confirm current details before
-mailing or relying on any number listed here.
+This generates template letters from published law, 15 U.S.C. §1681c-1 and,
+for Florida residents, Fla. Stat. §501.0051, and from procedures published by
+the bureaus. It lists publicly available hotline numbers. It is general
+information, not legal advice for any particular situation, and using it does
+not create an attorney-client relationship. Confirm current bureau
+requirements before mailing.
 
-## License
-
-MIT © [Klagge Law, PLLC](https://stepuplaw.com) — Kevin D. Klagge, Esq.,
-Fla. Bar No. 99502.
+MIT with Attribution, © [Klagge Law, PLLC](https://stepuplaw.com).
+Kevin D. Klagge, Esq., Fla. Bar No. 99502.

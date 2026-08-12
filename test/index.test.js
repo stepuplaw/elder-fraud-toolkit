@@ -54,13 +54,79 @@ test('fiduciary mode: TransUnion uses P.O. Box 380, not the self-freeze Box 160'
   assert.ok(!tu.mailingAddress.some((line) => line.includes('P.O. Box 160')));
 });
 
-test('Equifax and Experian addresses match the verified addresses in both modes', () => {
+test('Equifax and Experian use one box each across both modes', () => {
   for (const input of [fiduciaryInput, selfInput]) {
     const letters = buildFreezeLetters(input);
     const eq = letters.find((l) => l.bureau === 'Equifax');
     const ex = letters.find((l) => l.bureau === 'Experian');
-    assert.ok(eq.mailingAddress.some((line) => line.includes('P.O. Box 105788')));
-    assert.ok(ex.mailingAddress.some((line) => line.includes('P.O. Box 9554')));
+    assert.ok(eq.mailingAddress.some((line) => line.includes('105788')));
+    assert.ok(ex.mailingAddress.some((line) => line.includes('9554')));
+  }
+});
+
+// Experian prints the same box two ways: "Experian Security Freeze / P.O. Box 9554"
+// for an adult's own freeze, and "Experian / PO Box 9554" on the protected-consumer
+// page. Matching their wording keeps the letter recognisable to their mailroom.
+test('Experian addressee line differs between the two routes, as Experian publishes it', () => {
+  const self = buildFreezeLetters(selfInput).find((l) => l.bureau === 'Experian');
+  const fid = buildFreezeLetters(fiduciaryInput).find((l) => l.bureau === 'Experian');
+  assert.equal(self.mailingAddress[0], 'Experian Security Freeze');
+  assert.equal(fid.mailingAddress[0], 'Experian');
+  assert.ok(
+    !fid.mailingAddress.some((l) => /ATTN/i.test(l)),
+    'the widely copied "ATTN: Protected Consumer" line is published nowhere by Experian',
+  );
+});
+
+test('Equifax uses its full entity name and the ZIP+4 from its own forms', () => {
+  const eq = buildFreezeLetters(selfInput).find((l) => l.bureau === 'Equifax');
+  assert.equal(eq.mailingAddress[0], 'Equifax Information Services LLC');
+  assert.ok(eq.mailingAddress.some((l) => l.includes('30348-5788')));
+});
+
+test('every letter carries a blank Social Security line instead of collecting the number', () => {
+  for (const input of [fiduciaryInput, selfInput]) {
+    for (const letter of buildFreezeLetters(input)) {
+      assert.match(letter.paragraphs.join('\n'), /Social Security number: _+/);
+    }
+  }
+});
+
+test('enclosures differ per bureau, because the bureaus differ', () => {
+  const letters = buildFreezeLetters(fiduciaryInput);
+  const eq = letters.find((l) => l.bureau === 'Equifax');
+  const ex = letters.find((l) => l.bureau === 'Experian');
+  const tu = letters.find((l) => l.bureau === 'TransUnion');
+
+  // Equifax is the only bureau demanding both vital records of the protected person.
+  assert.ok(eq.enclosures.some((e) => /Social Security card of/.test(e)));
+  assert.ok(eq.enclosures.some((e) => /birth certificate of/.test(e)));
+  assert.ok(!tu.enclosures.some((e) => /birth certificate of/.test(e)));
+  assert.ok(!ex.enclosures.some((e) => /birth certificate of/.test(e)));
+
+  const sets = [eq, ex, tu].map((l) => JSON.stringify(l.enclosures));
+  assert.equal(new Set(sets).size, 3, 'one shared enclosure list would be wrong for at least two bureaus');
+});
+
+test('every letter carries a caution, and the two known traps are surfaced', () => {
+  for (const input of [fiduciaryInput, selfInput]) {
+    for (const letter of buildFreezeLetters(input)) {
+      assert.ok(letter.caution && letter.caution.length > 20);
+    }
+  }
+  const fid = buildFreezeLetters(fiduciaryInput);
+  assert.match(fid.find((l) => l.bureau === 'Experian').caution, /397-3742/);
+  assert.match(
+    fid.find((l) => l.bureau === 'TransUnion').caution,
+    /Box 2000/,
+    'the competent-adult POA address has to be surfaced somewhere',
+  );
+});
+
+test('the caution is guidance for the sender and never prints inside the letter', () => {
+  const html = renderLettersDocument(fiduciaryInput);
+  for (const letter of buildFreezeLetters(fiduciaryInput)) {
+    assert.ok(!html.includes(letter.caution));
   }
 });
 

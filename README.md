@@ -17,6 +17,11 @@ this library at
 Fill in the form, print three letters, mail them. Nothing you type there
 leaves your browser either.
 
+**Want to see the library itself running?** The demo in this repo is
+published at
+**[stepuplaw.github.io/elder-fraud-toolkit](https://stepuplaw.github.io/elder-fraud-toolkit/)**,
+including the QR codes and the save-all-to-Contacts vCard.
+
 ## Why this exists
 
 Americans over sixty reported more than **$7.7 billion** in fraud losses in

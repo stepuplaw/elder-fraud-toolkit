@@ -71,7 +71,14 @@ export interface FreezeLetter {
     mailingAddress: string[];
     subject: string;
     paragraphs: string[];
+    /** What that bureau wants in the envelope. Differs per bureau, by a lot. */
     enclosures: string[];
+    /**
+     * Guidance for the person mailing the letter, not part of the letter itself.
+     * Render it on screen and keep it out of the printed page. Each bureau has
+     * its own, because each one departs from the others somewhere.
+     */
+    caution: string;
 }
 export declare function formatDate(d: Date): string;
 /**

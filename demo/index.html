@@ -3,43 +3,63 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Protected Consumer Freeze Letter Generator (demo)</title>
+<title>Elder Fraud Toolkit (demo)</title>
 <style>
-  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; color: #1E293B; }
+  body { font-family: system-ui, sans-serif; max-width: 680px; margin: 2rem auto; padding: 0 1rem; color: #1E293B; }
   h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.15rem; margin-top: 2.5rem; }
   label { display: block; margin: 0.9rem 0 0.25rem; font-weight: 600; font-size: 0.95rem; }
   input, select { font-size: 1rem; padding: 0.45rem 0.6rem; width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 0.35rem; }
   .row { display: flex; gap: 0.75rem; }
   .row > * { flex: 1; }
   .notice { margin-top: 1.25rem; padding: 0.75rem 1rem; background: #f1f5f9; border-radius: 0.5rem; font-size: 0.9rem; }
   .notice strong { color: #b45309; }
-  button { margin-top: 1.5rem; font-size: 1rem; font-weight: 600; padding: 0.6rem 1.2rem; background: #1F4D3A; color: white; border: none; border-radius: 0.4rem; cursor: pointer; }
-  button.secondary { background: white; color: #1F4D3A; border: 1px solid #1F4D3A; margin-left: 0.5rem; }
+  .mode-toggle { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  .mode-toggle button { flex: 1; padding: 0.6rem; border: 1px solid #cbd5e1; background: white; border-radius: 0.4rem; cursor: pointer; font-weight: 600; }
+  .mode-toggle button.active { background: #1F4D3A; color: white; border-color: #1F4D3A; }
+  button.primary { margin-top: 1.5rem; font-size: 1rem; font-weight: 600; padding: 0.6rem 1.2rem; background: #1F4D3A; color: white; border: none; border-radius: 0.4rem; cursor: pointer; }
+  button.secondary { background: white; color: #1F4D3A; border: 1px solid #1F4D3A; margin-left: 0.5rem; padding: 0.6rem 1.2rem; border-radius: 0.4rem; cursor: pointer; font-weight: 600; }
   #output { margin-top: 2rem; }
   #output .freeze-letter { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+  .fiduciary-only { display: none; }
+  .contact-category { margin-top: 1.5rem; font-weight: 600; color: #1F4D3A; }
+  .contact-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid #e2e8f0; }
+  .contact-row .info { flex: 1; }
+  .contact-row .note { font-size: 0.85rem; color: #64748B; }
+  .contact-row a.call { color: #1F4D3A; font-weight: 600; text-decoration: none; }
+  .contact-row .qr { width: 64px; height: 64px; flex-shrink: 0; }
+  .contact-row .qr svg { width: 100%; height: 100%; }
   footer { margin-top: 2.5rem; font-size: 0.85rem; color: #64748B; border-top: 1px solid #e2e8f0; padding-top: 1rem; }
   @media print {
-    form, .notice, footer, button { display: none !important; }
+    form, .notice, footer, button, #contacts { display: none !important; }
     #output .freeze-letter { page-break-after: always; border: none; }
   }
 </style>
 </head>
 <body>
-  <h1>Protected Consumer Freeze Letter Generator</h1>
-  <p>Fill this in once and get three ready-to-mail letters, addressed correctly for Equifax, Experian, and TransUnion's protected-consumer freeze process.</p>
+  <h1>Elder Fraud Toolkit</h1>
+  <p>Two automatable pieces from a real client fraud-prevention checklist: mailed freeze letters, and one-tap call / save-to-contacts for the phone-based steps.</p>
 
   <div class="notice">
     <strong>Nothing you type here is sent anywhere.</strong> This runs entirely in your
     browser; there is no server, no analytics, and nothing is saved. Never type a
-    Social Security number into this or any similar form — the bureaus verify identity
-    from the ID copies you physically enclose, not from anything typed online.
+    Social Security number into this or any similar form.
+  </div>
+
+  <h2>1. Freeze letters</h2>
+  <div class="mode-toggle">
+    <button type="button" id="modeSelf" class="active">I'm doing this for myself</button>
+    <button type="button" id="modeFiduciary">I'm acting for someone else (POA / guardian)</button>
   </div>
 
   <form id="f">
-    <label for="pName">Protected person's full name</label>
+    <div class="fiduciary-only" id="protectedLabel">
+      <label for="pName">Protected person's full name</label>
+    </div>
+    <div id="selfLabelWrap"><label for="pName">Your full name</label></div>
     <input id="pName" required value="Jane Doe" />
 
-    <label for="pLine1">Their mailing address</label>
+    <label for="pLine1">Mailing address</label>
     <input id="pLine1" required value="123 Main St" />
     <div class="row">
       <div><label for="pCity">City</label><input id="pCity" required value="Miami" /></div>
@@ -49,37 +69,72 @@
     <label for="pDob">Date of birth (optional, helps the bureau find the file)</label>
     <input id="pDob" placeholder="e.g. March 14, 1940" />
 
-    <label for="fName">Your full name</label>
-    <input id="fName" required value="John Doe" />
+    <div class="fiduciary-only" id="fiduciaryFields">
+      <label for="fName">Your full name</label>
+      <input id="fName" value="John Doe" />
 
-    <label for="fCapacity">Your capacity</label>
-    <select id="fCapacity">
-      <option value="power-of-attorney">Agent under a durable power of attorney</option>
-      <option value="guardian">Court-appointed guardian</option>
-      <option value="conservator">Court-appointed conservator</option>
-    </select>
+      <label for="fCapacity">Your capacity</label>
+      <select id="fCapacity">
+        <option value="power-of-attorney">Agent under a durable power of attorney</option>
+        <option value="guardian">Court-appointed guardian</option>
+        <option value="conservator">Court-appointed conservator</option>
+      </select>
 
-    <label for="fDocDate">Date the POA / guardianship order was signed or entered (optional)</label>
-    <input id="fDocDate" placeholder="e.g. January 5, 2020" />
+      <label for="fDocDate">Date the POA / guardianship order was signed or entered (optional)</label>
+      <input id="fDocDate" placeholder="e.g. January 5, 2020" />
+    </div>
 
-    <label for="fPhone">Your phone (optional)</label>
+    <label for="fPhone">Phone (optional)</label>
     <input id="fPhone" />
 
-    <button type="submit">Generate the three letters</button>
+    <button type="submit" class="primary">Generate the three letters</button>
     <button type="button" id="printBtn" class="secondary" style="display:none">Print / Save as PDF</button>
   </form>
 
   <div id="output"></div>
 
+  <h2 id="contacts">2. Call or save the fraud-prevention hotlines</h2>
+  <p>
+    <button type="button" id="vcardBtn" class="secondary">Save all to Contacts</button>
+  </p>
+  <div id="contactList"></div>
+
   <footer>
     Free tool by Kevin D. Klagge, Esq., Klagge Law, PLLC &mdash;
     <a href="https://stepuplaw.com">stepuplaw.com</a>. General information, not
-    legal advice for any particular situation; confirm each bureau's current
-    requirements before mailing.
+    legal advice for any particular situation; confirm current requirements
+    before mailing or relying on any number listed here.
   </footer>
 
   <script type="module">
-    import { buildFreezeLetters, renderLetterHtml } from '../dist/index.js';
+    import {
+      buildFreezeLetters,
+      renderLetterHtml,
+      FRAUD_PREVENTION_CONTACTS,
+      telHref,
+      formatPhone,
+      buildFraudPreventionVCard,
+      qrCodeForContact,
+    } from '../dist/index.js';
+
+    let mode = 'self';
+    const modeSelf = document.getElementById('modeSelf');
+    const modeFiduciary = document.getElementById('modeFiduciary');
+    const protectedLabel = document.getElementById('protectedLabel');
+    const selfLabelWrap = document.getElementById('selfLabelWrap');
+    const fiduciaryFields = document.getElementById('fiduciaryFields');
+
+    function setMode(next) {
+      mode = next;
+      modeSelf.classList.toggle('active', mode === 'self');
+      modeFiduciary.classList.toggle('active', mode === 'fiduciary');
+      protectedLabel.style.display = mode === 'fiduciary' ? 'block' : 'none';
+      selfLabelWrap.style.display = mode === 'self' ? 'block' : 'none';
+      fiduciaryFields.style.display = mode === 'fiduciary' ? 'block' : 'none';
+    }
+    modeSelf.addEventListener('click', () => setMode('self'));
+    modeFiduciary.addEventListener('click', () => setMode('fiduciary'));
+    setMode('self');
 
     const form = document.getElementById('f');
     const output = document.getElementById('output');
@@ -87,24 +142,31 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const input = {
-        protectedPerson: {
-          name: document.getElementById('pName').value.trim(),
-          address: {
-            line1: document.getElementById('pLine1').value.trim(),
-            city: document.getElementById('pCity').value.trim(),
-            state: document.getElementById('pState').value.trim(),
-            zip: document.getElementById('pZip').value.trim(),
-          },
-          dateOfBirth: document.getElementById('pDob').value.trim() || undefined,
-        },
-        fiduciary: {
-          name: document.getElementById('fName').value.trim(),
-          capacity: document.getElementById('fCapacity').value,
-          phone: document.getElementById('fPhone').value.trim() || undefined,
-        },
-        authorityDocumentDate: document.getElementById('fDocDate').value.trim() || undefined,
+      const address = {
+        line1: document.getElementById('pLine1').value.trim(),
+        city: document.getElementById('pCity').value.trim(),
+        state: document.getElementById('pState').value.trim(),
+        zip: document.getElementById('pZip').value.trim(),
       };
+      const dateOfBirth = document.getElementById('pDob').value.trim() || undefined;
+      const phone = document.getElementById('fPhone').value.trim() || undefined;
+
+      const input = mode === 'self'
+        ? {
+            mode: 'self',
+            person: { name: document.getElementById('pName').value.trim(), address, dateOfBirth },
+            phone,
+          }
+        : {
+            mode: 'fiduciary',
+            protectedPerson: { name: document.getElementById('pName').value.trim(), address, dateOfBirth },
+            fiduciary: {
+              name: document.getElementById('fName').value.trim(),
+              capacity: document.getElementById('fCapacity').value,
+              phone,
+            },
+            authorityDocumentDate: document.getElementById('fDocDate').value.trim() || undefined,
+          };
 
       const letters = buildFreezeLetters(input);
       output.innerHTML = letters.map((l) => renderLetterHtml(l, input)).join('\n');
@@ -112,6 +174,38 @@
     });
 
     printBtn.addEventListener('click', () => window.print());
+
+    // --- contacts ---
+    const contactList = document.getElementById('contactList');
+    const categories = [...new Set(FRAUD_PREVENTION_CONTACTS.map((c) => c.category))];
+    contactList.innerHTML = categories
+      .map((category) => {
+        const rows = FRAUD_PREVENTION_CONTACTS.filter((c) => c.category === category)
+          .map(
+            (c) => `
+          <div class="contact-row">
+            <div class="qr">${qrCodeForContact(c, { cellSize: 3, margin: 2 })}</div>
+            <div class="info">
+              <div>${c.name}</div>
+              ${c.note ? `<div class="note">${c.note}</div>` : ''}
+            </div>
+            <a class="call" href="${telHref(c)}">${formatPhone(c)}</a>
+          </div>`,
+          )
+          .join('');
+        return `<div class="contact-category">${category}</div>${rows}`;
+      })
+      .join('');
+
+    document.getElementById('vcardBtn').addEventListener('click', () => {
+      const blob = new Blob([buildFraudPreventionVCard()], { type: 'text/vcard' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fraud-prevention-contacts.vcf';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
   </script>
 </body>
 </html>

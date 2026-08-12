@@ -1,7 +1,7 @@
 {
-  "name": "freeze-letter-generator",
+  "name": "elder-fraud-toolkit",
   "version": "0.1.0",
-  "description": "Generates protected-consumer credit-freeze request letters for the three major bureaus (Equifax, Experian, TransUnion), for a guardian, conservator, or POA agent acting for someone who can't freeze their own credit. Zero runtime dependencies, nothing ever leaves the browser.",
+  "description": "Automates the mail- and phone-based steps from a real elder-fraud-prevention checklist: protected-consumer credit-freeze letters (self-service or for a guardian/conservator/POA agent) plus click-to-call and save-to-contacts for every relevant hotline. One dependency (a client-side QR encoder), nothing ever leaves the browser.",
   "keywords": [
     "elder-fraud",
     "credit-freeze",
@@ -10,15 +10,17 @@
     "protected-consumer",
     "identity-theft",
     "fintech",
-    "legal-tech"
+    "legal-tech",
+    "vcard",
+    "qr-code"
   ],
   "homepage": "https://stepuplaw.com/florida-elder-abuse-attorney",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stepuplaw/freeze-letter-generator.git"
+    "url": "git+https://github.com/stepuplaw/elder-fraud-toolkit.git"
   },
   "bugs": {
-    "url": "https://github.com/stepuplaw/freeze-letter-generator/issues"
+    "url": "https://github.com/stepuplaw/elder-fraud-toolkit/issues"
   },
   "author": "Kevin D. Klagge, Esq. <office@stepuplaw.com> (https://stepuplaw.com)",
   "license": "MIT",
@@ -40,6 +42,9 @@
     "build": "tsc -p tsconfig.json",
     "pretest": "npm run build",
     "test": "node --test"
+  },
+  "dependencies": {
+    "qrcode-generator": "^2.0.4"
   },
   "devDependencies": {
     "typescript": "^5.6.0"

@@ -14,7 +14,7 @@
     "vcard",
     "qr-code"
   ],
-  "homepage": "https://stepuplaw.com/florida-elder-abuse-attorney",
+  "homepage": "https://stepuplaw.com/credit-freeze-letter-generator",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stepuplaw/elder-fraud-toolkit.git"
@@ -35,6 +35,7 @@
     }
   },
   "files": ["dist", "README.md", "LICENSE"],
+  "publishConfig": { "access": "public" },
   "engines": {
     "node": ">=18"
   },

@@ -6,6 +6,7 @@ and turns the fraud prevention hotlines into one tap calls, a save all to
 Contacts vCard, and QR codes. TypeScript, one dependency, no network calls
 anywhere in it.
 
+[![npm](https://img.shields.io/npm/v/elder-fraud-toolkit.svg)](https://www.npmjs.com/package/elder-fraud-toolkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
 [![Network calls](https://img.shields.io/badge/network%20calls-zero-brightgreen.svg)](#privacy-by-design)
@@ -77,11 +78,13 @@ desktop can hand a call to a phone.
 
 ## Install
 
-Not on the npm registry yet. Install from GitHub:
-
 ```bash
-npm install github:stepuplaw/elder-fraud-toolkit
+npm install elder-fraud-toolkit
 ```
+
+On npm at
+[npmjs.com/package/elder-fraud-toolkit](https://www.npmjs.com/package/elder-fraud-toolkit).
+Node 18 or newer, ESM only, one runtime dependency.
 
 Or clone and build:
 

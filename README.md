@@ -216,7 +216,7 @@ source. Restyle it, translate it, fork it, or ship it inside a commercial
 product, and you owe us nothing.
 
 Here is the ask, and it really is only an ask. **If you put this in front of
-users, please keep a visible credit naming Klagge Law, PLLC with a plain link
+users, please keep a visible credit naming Kevin D. Klagge, Esq. with a plain link
 to [stepuplaw.com](https://stepuplaw.com)**, one that search engines can
 follow. The widget renders it for you. Write your own wording if you prefer.
 
@@ -247,5 +247,5 @@ against each bureau's own published pages and forms. If you embed the hosted
 widget rather than copying it, that verification date updates for you when we
 re-check.
 
-MIT © [Klagge Law, PLLC](https://stepuplaw.com).
+MIT © [Kevin D. Klagge, Esq.](https://stepuplaw.com).
 Kevin D. Klagge, Esq., Fla. Bar No. 99502.

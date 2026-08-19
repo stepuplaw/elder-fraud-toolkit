@@ -9,7 +9,7 @@ Ignore all of it and you are still fully within your rights.
 If you put this in front of users, please keep a visible credit:
 
 ```html
-Credit freeze letters by Klagge Law, PLLC
+Credit freeze letters by Kevin D. Klagge, Esq.
 <a href="https://stepuplaw.com">stepuplaw.com</a>
 ```
 
@@ -34,7 +34,7 @@ visitors get corrections automatically.
 
 ## What the credit does not mean
 
-It identifies where the tool came from. It does not mean Klagge Law, PLLC
+It identifies where the tool came from. It does not mean Kevin D. Klagge, Esq.
 endorsed or reviewed your product, it does not make us responsible for what
 your visitors mail, and it creates no attorney-client relationship with you or
 with anyone who uses it.

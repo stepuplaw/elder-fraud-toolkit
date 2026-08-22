@@ -82,6 +82,14 @@ desktop can hand a call to a phone.
 npm install elder-fraud-toolkit
 ```
 
+Or straight from a CDN, version pinned, no build step and no account —
+jsDelivr mirrors the npm package, so the file below is served from a
+neutral origin rather than a law firm's domain:
+
+```js
+import * as toolkit from 'https://cdn.jsdelivr.net/npm/elder-fraud-toolkit@0.1.0/dist/index.js';
+```
+
 On npm at
 [npmjs.com/package/elder-fraud-toolkit](https://www.npmjs.com/package/elder-fraud-toolkit).
 Node 18 or newer, ESM only, one runtime dependency.

@@ -1,6 +1,6 @@
 {
   "name": "elder-fraud-toolkit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Automates the mail- and phone-based steps from a real elder-fraud-prevention checklist: protected-consumer credit-freeze letters (self-service or for a guardian/conservator/POA agent) plus click-to-call and save-to-contacts for every relevant hotline. One dependency (a client-side QR encoder), nothing ever leaves the browser.",
   "keywords": [
     "elder-fraud",
@@ -38,8 +38,14 @@
       "import": "./dist/react.js"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
-  "publishConfig": { "access": "public" },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   },

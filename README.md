@@ -112,6 +112,51 @@ no CDN and no network access.
 
 ## Usage
 
+### React
+
+```bash
+npm install elder-fraud-toolkit
+```
+
+React 17 or newer is a peer dependency, so it is already there if you are in
+a React project. The wrapper ships as a subpath export:
+
+```jsx
+import { CreditFreeze } from 'elder-fraud-toolkit/react';
+
+// The stock widget:
+<CreditFreeze />
+
+// Matched to your palette — each prop maps to one of the CSS custom
+// properties the widget reads off its container:
+<CreditFreeze
+  brand="#1F4D3A"   // --sufz-brand: buttons and accents
+  fg="#14201A"      // --sufz-fg: body text
+  mut="#475569"     // --sufz-mut: muted text
+  line="rgba(71,85,105,.22)" // --sufz-line: hairlines inside the card
+  edge="#334155"    // --sufz-edge: outer frame and tab strip
+/>
+```
+
+Any prop you leave off keeps the widget's own default. Pass
+`credit={false}` to drop the credit line (it is a request, not a licence
+condition — see [ATTRIBUTION.md](./ATTRIBUTION.md)). Ordinary div props like
+`className` land on the wrapper around the widget.
+
+Two things worth knowing:
+
+- **It loads the same hosted script the two-line embed uses.** That is the
+  point: bureau addresses and phone numbers move, and the hosted file is the
+  copy that gets re-verified, so your embed picks corrections up without a
+  redeploy. After that file loads the widget makes no network calls at all —
+  nothing typed into it is sent anywhere.
+- **Routing back into the component works.** The raw embed scans the page
+  once at load; the wrapper notices when React has mounted a new instance
+  after that scan and runs it again, so client-side navigation renders the
+  widget every time.
+
+Server-side rendering is supported; the widget attaches in the browser.
+
 ### Freeze letters
 
 ```ts
@@ -184,6 +229,7 @@ const svg = qrCodeForContact(FRAUD_PREVENTION_CONTACTS[0]);
 | `buildFraudPreventionVCard` | `(contacts?: FraudPreventionContact[]) => string` | One `.vcf` for all, or a subset. |
 | `qrCodeSvg` | `(text: string, options?: QrCodeOptions) => string` | Inline SVG QR code for any text. |
 | `qrCodeForContact` | `(contact: FraudPreventionContact, options?: QrCodeOptions) => string` | QR code for a contact's `tel:` link. |
+| [`CreditFreeze`](#react) | `<CreditFreeze brand fg mut line edge credit />` | React component wrapping the embeddable widget. Import from `'elder-fraud-toolkit/react'`. |
 
 Full types are in [`src/letters.ts`](./src/letters.ts),
 [`src/contacts.ts`](./src/contacts.ts) and [`src/qr.ts`](./src/qr.ts), and
